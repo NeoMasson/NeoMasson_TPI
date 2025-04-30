@@ -1,0 +1,145 @@
+Installer php :
+https://windows.php.net/download/
+Si la version n'est pas compatible mettre à jour visual studio c++ ici :
+https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
+
+Installer composer :
+https://getcomposer.org/
+
+Installer mysql :
+https://dev.mysql.com/downloads/mysql/
+
+Installer nodejs et NPM :
+https://nodejs.org/fr
+
+(Installer tailwindcss :) 
+https://tailwindcss.com/docs/installation/framework-guides/laravel/vite
+
+Installer symphony/dom-crawler et guzzle (pour le scraping) :
+composer require guzzlehttp/guzzle
+composer require symfony/dom-crawler
+
+Pour autoriser l'exécution des scripts :
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+installer Laravel
+composer create-project --prefer-dist laravel/laravel my-laravel-app
+cd my-laravel-app
+cp .env.example .env
+
+configuration du fichier .env :
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=root
+
+Dans php.ini décommanter :
+;extension=fileinfo
+;extension=pdo_mysql
+
+Générer la clé :
+php artisan key:generate
+
+Installer les dépendences si c'est pas fait : 
+composer install
+npm install
+
+Dans le terminal, aller où se trouve mysql :
+mysql -u root -p
+
+CREATE DATABASE laravel;
+SHOW DATABASES;
+use Laravel
+SHOW TABLES;
+
+Exécuter les migrations : 
+php artisan migrate
+
+Lancer le serveur Laravel : 
+php artisan serve (--port=8000)
+
+Pour les tests : 
+php artisan test
+
+Configuration :
+
+Migrations pour les tables :
+php artisan make:model Question -m
+php artisan make:model Answer -m
+php artisan make:model User -m
+
+Aller dans le fichier généré et y ajouté les attributs :
+Chemin : database/migrations/xxxx_xx_xx_xxxxxx_create_questions_table.php : 
+Code: 
+public function up()
+{
+    Schema::create('questions', function (Blueprint $table) {
+        $table->id();
+        $table->string('title');
+        $table->timestamps();
+    });
+}
+
+Même chose pour le deuxième :
+Chemin : database/migrations/xxxx_xx_xx_xxxxxx_create_answers_table.php
+Code :
+public function up()
+{
+    Schema::create('answers', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('question_id')->constrained()->onDelete('cascade');
+        $table->string('answer_text');
+        $table->boolean('is_correct')->default(false);
+        $table->timestamps();
+    });
+}
+
+Relancer la migration :
+php artisan migrate
+
+Pour avoir l'authentification de Laravel :
+composer require laravel/ui
+php artisan ui bootstrap --auth
+npm install && npm run dev
+
+
+Choses à tester si jamais : 
+Il faut aller dans le fichier php.ini et activer la ligne ";extension=zip"
+
+chemin : notepad C:\Users\eleve\Downloads\php-8.4.5-nts-Win32-vs17-x64\php.ini
+
+Puis lancer la commande :
+composer global require laravel/installer
+
+Créer le projet avec : 
+laravel new <nom_du_projet>
+
+Pour que l'IA fonctionne : 
+Mettre à jour le bundle de certificats de cURL
+Téléchargez le bundle de certificats depuis https://curl.haxx.se/ca/cacert.pem et configurez votre fichier php.ini pour que cURL l'utilise.
+
+Par exemple, dans le php.ini, recherchez :
+;curl.cainfo =
+
+et décommentez/modifiez en :
+curl.cainfo = "C:\chemin\vers\cacert.pem"
+
+
+Puis :
+[none]
+[1] PHPUnit
+
+
+Commandes SQL utilisée par la suite :
+XXX
+ALTER TABLE questions ADD COLUMN quiz_id bigint unsigned NOT NULL;
+ALTER TABLE questions ADD CONSTRAINT fk_quiz_id FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE;
+
+
+
+
+
+
+
