@@ -1,0 +1,37 @@
+Installer php :
+https://windows.php.net/download/
+Si la version n'est pas compatible mettre à jour visual studio c++ ici :
+https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
+
+Installer composer :
+https://getcomposer.org/
+
+
+Installer nodejs et NPM :
+https://nodejs.org/fr
+
+Installer Laravel dans le dossier de projet :
+composer create-project laravel/laravel ExceptionTea
+
+Copier le fichier env : 
+cd ExceptionTea 
+copy .env.example .env
+
+Générer la clef de chiffrement : 
+php artisan key:generate
+
+Ouvrir le fichier env et modifier comme cela : 
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=exceptiontea
+DB_USERNAME=root
+DB_PASSWORD=root
+
+Créer la base de donnée :
+
+CREATE DATABASE ExceptionTea CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+
+
