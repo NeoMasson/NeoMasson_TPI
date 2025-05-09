@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="min-h-screen bg-[#FFEFCD] flex flex-col items-center pt-6 sm:pt-0">
-        <a href="/">
-            <h1 class="text-3xl font-bold mb-6 text-[#967259]">ExceptionTea</h1>
-        </a>
+    <div class="w-full bg-[#967259] py-6 mb-6">
+            <h1 class="text-3xl font-bold text-white text-center">Se connecter</h1>
+        </div>
 
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-[#F4E5C3] shadow-md overflow-hidden sm:rounded-lg">
             <div class="mb-8">
@@ -44,7 +44,7 @@
                 </div>
 
                 <button type="submit" class="w-full py-2 px-4 bg-[#967259] hover:bg-[#7d6049] text-white font-semibold rounded-md transition duration-200">
-                    S'authentifier
+                    Connexion
                 </button>
 
                 <div class="mt-4 text-center">

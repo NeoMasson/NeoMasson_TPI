@@ -25,15 +25,15 @@
                     @auth
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/home.png') }}" alt="Home" class="w-5 h-5">
-                            <a href="{{ route('dashboard') }}" class="text-white hover:text-gray-200">Accueil</a>
+                            <a href="{{ route('dashboard') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Accueil</a>
                         </li>
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/list.png') }}" alt="List" class="w-5 h-5">
-                            <a href="#" class="text-white hover:text-gray-200">Listes</a>
+                            <a href="{{ route('listes.index') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('listes.*') ? 'font-bold' : '' }}">Listes</a>
                         </li>
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/add.png') }}" alt="Add" class="w-5 h-5">
-                            <a href="#" class="text-white hover:text-gray-200">Ajouter</a>
+                            <a href="{{ route('thes.create') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('thes.create') ? 'font-bold' : '' }}">Ajouter un thé</a>
                         </li>
                     @endauth
                 </ul>
@@ -44,9 +44,16 @@
         <main class="flex-1 p-8">
             @auth
                 <div class="mb-6">
-                    <h1 class="text-3xl font-bold text-center bg-[#967259] text-white py-3">@yield('header', 'Accueil')</h1>
+                    <h1 class="text-3xl font-bold text-center bg-[#967259] text-white py-3 rounded-lg">
+                        @yield('header', 'Accueil')
+                    </h1>
                 </div>
-                <div class="bg-[#F4E5C3] rounded-lg shadow-lg p-6">
+
+                <!-- Messages Flash -->
+                @include('partials.flash-messages')
+
+                <!-- Contenu principal -->
+                <div class="bg-[#F4E5C3] rounded-lg shadow-lg">
                     @yield('content')
                 </div>
             @else
@@ -61,5 +68,7 @@
                 </div>
             @endauth
         </main>
+
+        @stack('scripts')
     </body>
 </html>

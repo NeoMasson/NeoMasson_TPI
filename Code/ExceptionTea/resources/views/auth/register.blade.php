@@ -8,7 +8,8 @@
 
         <div class="w-full sm:max-w-md px-6 py-4 bg-[#F4E5C3] shadow-md overflow-hidden sm:rounded-lg">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-center">Commencez dès maintenant</h2>
+            <h2 class="text-2xl font-bold text-center">Commencez dès maintenant</h2>
+                <p class="text-center mt-2">Entrez vos identifiants pour accéder à votre compte</p>
             </div>
 
             <form method="POST" action="{{ route('register') }}">
