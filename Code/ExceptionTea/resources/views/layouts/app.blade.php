@@ -7,15 +7,11 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-[#FFEFCD] flex h-screen">
-        <!-- Sidebar -->
+        <!-- Menu latéral - Navigation principale -->
         <aside class="w-64 bg-[#967259] h-full p-6">
             <div class="mb-10">
                 <div class="w-32 h-16 bg-gray-300 mx-auto mb-4"></div>
@@ -23,14 +19,17 @@
             <nav>
                 <ul class="space-y-4">
                     @auth
+                        <!-- Lien vers la page d'accueil -->
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/home.png') }}" alt="Home" class="w-5 h-5">
                             <a href="{{ route('dashboard') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Accueil</a>
                         </li>
+                        <!-- Lien vers la gestion des listes -->
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/list.png') }}" alt="List" class="w-5 h-5">
                             <a href="{{ route('listes.index') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('listes.*') ? 'font-bold' : '' }}">Listes</a>
                         </li>
+                        <!-- Lien pour ajouter un nouveau thé -->
                         <li class="flex items-center space-x-2">
                             <img src="{{ asset('icons/add.png') }}" alt="Add" class="w-5 h-5">
                             <a href="{{ route('thes.create') }}" class="text-white hover:text-gray-200 {{ request()->routeIs('thes.create') ? 'font-bold' : '' }}">Ajouter un thé</a>
@@ -40,23 +39,25 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Contenu principal -->
         <main class="flex-1 p-8">
             @auth
+                <!-- En-tête de la page -->
                 <div class="mb-6">
                     <h1 class="text-3xl font-bold text-center bg-[#967259] text-white py-3 rounded-lg">
                         @yield('header', 'Accueil')
                     </h1>
                 </div>
 
-                <!-- Messages Flash -->
+                <!-- Messages de notification -->
                 @include('partials.flash-messages')
 
-                <!-- Contenu principal -->
+                <!-- Zone de contenu principale -->
                 <div class="bg-[#F4E5C3] rounded-lg shadow-lg">
                     @yield('content')
                 </div>
             @else
+                <!-- Page de connexion/inscription -->
                 <div class="flex items-center justify-center h-full">
                     <div class="bg-[#F4E5C3] rounded-lg shadow-lg p-8 max-w-md w-full text-center">
                         <h1 class="text-3xl font-bold mb-6">Bienvenue sur ExceptionTea</h1>
@@ -66,9 +67,10 @@
                         </div>
                     </div>
                 </div>
-            @endauth
+            @endif
         </main>
 
+        <!-- Scripts supplémentaires -->
         @stack('scripts')
     </body>
 </html>

@@ -8,10 +8,18 @@ use App\Models\Variete;
 use App\Models\Provenance;
 use Illuminate\Http\Request;
 
+/**
+ * Contrôleur gérant toutes les opérations CRUD sur les thés
+ * Permet la gestion complète du catalogue de thés, incluant leurs caractéristiques
+ * et leurs relations avec les types, variétés et provenances
+ */
 class TheController extends Controller
 {
     /**
-     * Affiche la liste des thés
+     * Affiche la liste complète des thés
+     * Charge également les relations (type, provenance, variété) pour éviter les requêtes N+1
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -21,6 +29,10 @@ class TheController extends Controller
 
     /**
      * Affiche les détails d'un thé spécifique
+     * Inclut toutes les informations associées (type, provenance, variété)
+     *
+     * @param The $the Le thé à afficher (injection de modèle)
+     * @return \Illuminate\View\View
      */
     public function show(The $the)
     {
@@ -30,6 +42,10 @@ class TheController extends Controller
 
     /**
      * Affiche le formulaire d'édition d'un thé
+     * Charge toutes les données nécessaires pour les menus déroulants
+     *
+     * @param The $the Le thé à éditer
+     * @return \Illuminate\View\View
      */
     public function edit(The $the)
     {
@@ -42,7 +58,12 @@ class TheController extends Controller
     }
 
     /**
-     * Met à jour un thé
+     * Met à jour les informations d'un thé existant
+     * Valide les données entrées et met à jour toutes les relations
+     *
+     * @param Request $request Les données du formulaire
+     * @param The $the Le thé à mettre à jour
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, The $the)
     {
@@ -68,7 +89,11 @@ class TheController extends Controller
     }
 
     /**
-     * Supprime un thé
+     * Supprime un thé du catalogue
+     * Gère également la suppression des relations dans les listes
+     *
+     * @param The $the Le thé à supprimer
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(The $the)
     {
@@ -78,7 +103,10 @@ class TheController extends Controller
     }
 
     /**
-     * Affiche le formulaire de création d'un thé
+     * Affiche le formulaire de création d'un nouveau thé
+     * Charge toutes les données nécessaires pour les menus déroulants
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -90,7 +118,11 @@ class TheController extends Controller
     }
 
     /**
-     * Enregistre un nouveau thé
+     * Enregistre un nouveau thé dans le catalogue
+     * Valide toutes les données requises et crée les relations
+     *
+     * @param Request $request Les données du formulaire
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {

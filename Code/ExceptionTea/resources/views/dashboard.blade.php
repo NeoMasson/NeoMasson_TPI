@@ -6,20 +6,23 @@ Tous les Thés
 
 @section('content')
 <div class="space-y-4">
-    <!-- Filtres -->
+    <!-- Section des filtres de recherche -->
     <div class="bg-[#967259] p-4 rounded-lg">
         <div class="flex flex-wrap gap-4">
+            <!-- Barre de recherche textuelle -->
             <input type="text" id="searchInput" placeholder="Rechercher un thé..." 
-                class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-white">
+                class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
             
-            <select id="typeFilter" class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-white">
-                <option value="">Tous les types</option>
+            <!-- Filtre par type de thé -->
+            <select id="typeFilter" class="mg-4 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
+                <option value="">Tous les types     </option>
                 @foreach($types as $type)
                     <option value="{{ $type->nom }}">{{ $type->nom }}</option>
                 @endforeach
             </select>
 
-            <select id="provenanceFilter" class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-white">
+            <!-- Filtre par provenance -->
+            <select id="provenanceFilter" class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
                 <option value="">Toutes les provenances</option>
                 @foreach($provenances as $provenance)
                     <option value="{{ $provenance->nom }}">{{ $provenance->nom }}</option>
@@ -28,9 +31,10 @@ Tous les Thés
         </div>
     </div>
 
-    <!-- Tableau des thés -->
+    <!-- Tableau principal des thés -->
     <div class="bg-[#FFEFCD] rounded-lg shadow overflow-hidden">
         <table class="min-w-full divide-y divide-[#967259]" id="teasTable">
+            <!-- En-tête du tableau avec colonnes triables -->
             <thead class="bg-[#967259]">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer" data-sort="nom">
@@ -50,6 +54,7 @@ Tous les Thés
                     </th>
                 </tr>
             </thead>
+            <!-- Corps du tableau avec les données des thés -->
             <tbody class="bg-[#FFEFCD] divide-y divide-[#967259]">
                 @foreach($thes as $the)
                     <tr class="hover:bg-[#F4E5C3] transition-colors">
@@ -70,7 +75,9 @@ Tous les Thés
 
 @push('scripts')
 <script>
+/* Script pour la gestion du tableau interactif */
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation des éléments DOM
     const table = document.getElementById('teasTable');
     const searchInput = document.getElementById('searchInput');
     const typeFilter = document.getElementById('typeFilter');
@@ -78,7 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const rows = Array.from(table.querySelectorAll('tbody tr'));
     let sortDirection = {};
 
-    // Fonction de tri
+    /**
+     * Fonction de tri du tableau
+     * @param {string} column - La colonne sur laquelle effectuer le tri
+     */
     function sortTable(column) {
         const index = {
             'nom': 0,
@@ -97,11 +107,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 bValue.localeCompare(aValue);
         });
 
+        // Mise à jour du tableau avec les lignes triées
         tbody.innerHTML = '';
         sortedRows.forEach(row => tbody.appendChild(row));
     }
 
-    // Gestionnaires d'événements pour le tri
+    // Ajout des écouteurs d'événements pour le tri
     table.querySelectorAll('th[data-sort]').forEach(th => {
         th.addEventListener('click', () => {
             const column = th.dataset.sort;
@@ -109,7 +120,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Fonction de filtrage
+    /**
+     * Fonction de filtrage du tableau
+     * Applique les filtres de recherche, type et provenance
+     */
     function filterTable() {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedType = typeFilter.value.toLowerCase();
@@ -120,15 +134,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = row.children[1].textContent.toLowerCase();
             const provenance = row.children[2].textContent.toLowerCase();
 
+            // Application des différents filtres
             const matchesSearch = name.includes(searchTerm);
             const matchesType = !selectedType || type === selectedType;
             const matchesProvenance = !selectedProvenance || provenance === selectedProvenance;
 
+            // Affichage/masquage des lignes selon les filtres
             row.style.display = (matchesSearch && matchesType && matchesProvenance) ? '' : 'none';
         });
     }
 
-    // Gestionnaires d'événements pour le filtrage
+    // Ajout des écouteurs d'événements pour le filtrage
     searchInput.addEventListener('input', filterTable);
     typeFilter.addEventListener('change', filterTable);
     provenanceFilter.addEventListener('change', filterTable);
