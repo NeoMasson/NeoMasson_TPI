@@ -14,10 +14,10 @@
         <!-- Menu latéral - Navigation principale -->
         <aside class="w-64 bg-[#967259] h-full p-6">
             <div class="mb-10">
-                <div class="w-32 h-16 bg-gray-300 mx-auto mb-4"></div>
+                <div class="w-40 h-16 mx-auto mb-6"> <img src="{{ asset('images/logo_ExceptionTea.webp') }}" alt="Logo du site"></div>
             </div>
             <nav>
-                <ul class="space-y-4">
+                <ul class="mt-24 space-y-8">
                     @auth
                         <!-- Lien vers la page d'accueil -->
                         <li class="flex items-center space-x-2">

@@ -9,7 +9,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
     </a>
-    <span>Modifier {{ $the->nom }}</span>
+    <span>Modifier le {{ $the->nom }}</span>
 </div>
 @endsection
 
@@ -99,7 +99,7 @@
     <div class="col-span-2 flex justify-between bg-[#967259] rounded-lg overflow-hidden">
         {{-- Bouton Annuler qui renvoie à la page de détails --}}
         <a href="{{ route('thes.show', $the) }}" 
-            class="flex-1 py-4 text-center text-white hover:bg-[#7d6049] transition-colors border-r border-[#7d6049]">
+            class="flex-1 py-4 text-center text-white hover:bg-[#7d6049] transition-colors border-r border-[#000000]">
             Annuler
         </a>
         {{-- Bouton pour sauvegarder les modifications --}}

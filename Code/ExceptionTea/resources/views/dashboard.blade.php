@@ -14,16 +14,16 @@ Tous les Thés
                 class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
             
             <!-- Filtre par type de thé -->
-            <select id="typeFilter" class="mg-4 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
-                <option value="">Tous les types     </option>
+            <select id="typeFilter" class="w-full sm:w-48 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
+                <option value="">Filtrer types</option>
                 @foreach($types as $type)
                     <option value="{{ $type->nom }}">{{ $type->nom }}</option>
                 @endforeach
             </select>
 
             <!-- Filtre par provenance -->
-            <select id="provenanceFilter" class="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
-                <option value="">Toutes les provenances</option>
+            <select id="provenanceFilter" class="w-full sm:w-48 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7d6049] bg-input">
+                <option value="">Filtrer provenances</option>
                 @foreach($provenances as $provenance)
                     <option value="{{ $provenance->nom }}">{{ $provenance->nom }}</option>
                 @endforeach
