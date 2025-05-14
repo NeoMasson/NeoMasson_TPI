@@ -9,7 +9,7 @@
         <div class="w-full sm:max-w-md px-6 py-4 bg-[#F4E5C3] shadow-md overflow-hidden sm:rounded-lg">
             <div class="mb-8">
             <h2 class="text-2xl font-bold text-center">Commencez dès maintenant</h2>
-                <p class="text-center mt-2">Entrez vos identifiants pour accéder à votre compte</p>
+                <p class="text-center mt-2">Créez de nouveaux identifiants pour votre compte</p>
             </div>
 
             <form method="POST" action="{{ route('register') }}">
@@ -35,12 +35,22 @@
                     @enderror
                 </div>
 
-                <!-- Password -->
+                <!-- Mot de passe -->
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
                     <input id="password" type="password" name="password" required
                         class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#967259] focus:border-[#967259]">
                     @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Confirmation du mot de passe-->
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Confirmation du mot de passe</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required
+                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#967259] focus:border-[#967259]">
+                    @error('password_confirmation')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

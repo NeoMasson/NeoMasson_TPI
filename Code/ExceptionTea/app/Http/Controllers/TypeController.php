@@ -7,15 +7,28 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 /**
- * Contrôleur pour gérer les types de thé
+ * Contrôleur pour la gestion des types de thé
+ * 
+ * Ce contrôleur gère l'ensemble des opérations CRUD pour les types de thé.
+ * Les types de thé sont des catégories fondamentales (vert, noir, blanc, etc.) 
+ * qui servent de base pour la classification des thés dans le catalogue.
+ * 
+ * Toutes les méthodes retournent des réponses JSON pour faciliter
+ * l'intégration avec l'interface utilisateur.
  */
 class TypeController extends Controller
 {
     /**
-     * Enregistrer un nouveau type
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Enregistre un nouveau type de thé dans le catalogue
+     * 
+     * Cette méthode vérifie que :
+     * - Le nom du type est unique dans la base de données
+     * - Le nom respecte les contraintes de longueur
+     * 
+     * @param Request $request La requête contenant les données du nouveau type
+     * @return JsonResponse Retourne le type créé avec un code 201 ou une erreur
+     * 
+     * @throws \Illuminate\Validation\ValidationException Si les données sont invalides
      */
     public function store(Request $request): JsonResponse
     {
@@ -43,11 +56,19 @@ class TypeController extends Controller
     }
 
     /**
-     * Mettre à jour un type existant
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
+     * Met à jour les informations d'un type de thé existant
+     * 
+     * Cette méthode vérifie que :
+     * - Le type existe dans la base de données
+     * - Le nouveau nom est unique (sauf pour le type en cours de modification)
+     * - Le nom respecte les contraintes de longueur
+     * 
+     * @param Request $request La requête contenant les nouvelles données
+     * @param int $id L'identifiant du type à modifier
+     * @return JsonResponse Retourne le type modifié ou une erreur
+     * 
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si le type n'existe pas
+     * @throws \Illuminate\Validation\ValidationException Si les données sont invalides
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -75,10 +96,17 @@ class TypeController extends Controller
     }
 
     /**
-     * Supprimer un type
-     *
-     * @param int $id
-     * @return JsonResponse
+     * Supprime un type de thé du catalogue
+     * 
+     * Cette méthode vérifie que :
+     * - Le type existe dans la base de données
+     * - Le type n'est pas actuellement utilisé par des thés
+     * 
+     * @param int $id L'identifiant du type à supprimer
+     * @return JsonResponse Retourne un message de succès ou une erreur
+     * 
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si le type n'existe pas
+     * @throws \Exception Si le type est encore utilisé par des thés
      */
     public function destroy($id): JsonResponse
     {
@@ -95,5 +123,16 @@ class TypeController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Retourne la liste complète des types
+     * Utilisé pour les mises à jour AJAX des listes déroulantes
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function list()
+    {
+        return response()->json(Type::all());
     }
 }

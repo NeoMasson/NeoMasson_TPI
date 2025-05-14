@@ -7,15 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 /**
- * Contrôleur pour gérer les variétés de thé
+ * Contrôleur pour la gestion des variétés de thé
+ * 
+ * Ce contrôleur gère l'ensemble des opérations CRUD pour les variétés de thé.
+ * 
+ * Toutes les méthodes retournent des réponses JSON pour faciliter
+ * l'intégration avec l'interface utilisateur.
  */
 class VarieteController extends Controller
 {
     /**
-     * Enregistrer une nouvelle variété
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Enregistre une nouvelle variété de thé dans le catalogue
+     * 
+     * Cette méthode vérifie que :
+     * - Le nom de la variété est unique dans la base de données
+     * - Le nom respecte les contraintes de longueur
+     * 
+     * @param Request $request La requête contenant les données de la nouvelle variété
+     * @return JsonResponse Retourne la variété créée avec un code 201 ou une erreur
+     * 
+     * @throws \Illuminate\Validation\ValidationException Si les données sont invalides
      */
     public function store(Request $request): JsonResponse
     {
@@ -43,11 +54,19 @@ class VarieteController extends Controller
     }
 
     /**
-     * Mettre à jour une variété existante
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
+     * Met à jour les informations d'une variété de thé existante
+     * 
+     * Cette méthode vérifie que :
+     * - La variété existe dans la base de données
+     * - Le nouveau nom est unique (sauf pour la variété en cours de modification)
+     * - Le nom respecte les contraintes de longueur
+     * 
+     * @param Request $request La requête contenant les nouvelles données
+     * @param int $id L'identifiant de la variété à modifier
+     * @return JsonResponse Retourne la variété modifiée ou une erreur
+     * 
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si la variété n'existe pas
+     * @throws \Illuminate\Validation\ValidationException Si les données sont invalides
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -75,10 +94,17 @@ class VarieteController extends Controller
     }
 
     /**
-     * Supprimer une variété
-     *
-     * @param int $id
-     * @return JsonResponse
+     * Supprime une variété de thé du catalogue
+     * 
+     * Cette méthode vérifie que :
+     * - La variété existe dans la base de données
+     * - La variété n'est pas actuellement utilisée par des thés
+     * 
+     * @param int $id L'identifiant de la variété à supprimer
+     * @return JsonResponse Retourne un message de succès ou une erreur
+     * 
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si la variété n'existe pas
+     * @throws \Exception Si la variété est encore utilisée par des thés
      */
     public function destroy($id): JsonResponse
     {
@@ -95,5 +121,16 @@ class VarieteController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Retourne la liste complète des variétés
+     * Utilisé pour les mises à jour AJAX des listes déroulantes
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function list()
+    {
+        return response()->json(Variete::all());
     }
 }

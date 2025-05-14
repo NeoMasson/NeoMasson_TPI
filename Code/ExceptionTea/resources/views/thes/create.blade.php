@@ -1,60 +1,75 @@
 @extends('layouts.app')
 
-{{-- Définition du titre de la page dans l'en-tête --}}
+<!-- Définition du titre de la page dans l'en-tête -->
 @section('header')
     Ajouter un Thé
 @endsection
 
 @section('content')
-{{-- Formulaire principal avec mise en page responsive --}}
+<!-- Formulaire principal avec mise en page responsive -->
 <form action="{{ route('thes.store') }}" method="POST" class="max-w-4xl mx-auto p-6">
-    {{-- Token CSRF pour la sécurité --}}
+    <!-- Token CSRF pour la sécurité -->
     @csrf
-    
-    {{-- Grille principale divisée en deux colonnes --}}
+      <!-- Grille principale divisée en deux colonnes -->
     <div class="grid grid-cols-2 gap-6">
-        {{-- Colonne gauche : Informations générales --}}
+        <!-- Colonne gauche : Informations générales -->
         <div class="space-y-6">
-            {{-- Champ pour le nom du thé --}}
+            <!-- Champ pour le nom du thé -->
             <div>
                 <label for="nom" class="block text-lg font-bold text-[#4A3428] mb-2">Nom</label>
                 <div class="relative">
                     <input type="text" id="nom" name="nom" 
-                        placeholder="e.g. Apple, Banana, etc."
+                        placeholder="e.g. Matcha, Earl grey, etc."
                         class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
                 </div>
             </div>
 
-            {{-- Zone de texte pour la description --}}
+            <!-- Zone de texte pour la description -->
             <div>
-                <label for="description" class="block text-lg font-bold text-[#4A3428] mb-2">Description</label>
-                <textarea id="description" name="description" rows="4"
-                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]"></textarea>
-            </div>            {{-- Champ pour le prix --}}            <div>
+                <label for="description" class="block text-lg font-bold text-[#4A3428] mb-2">Description</label><textarea id="description" name="description" rows="4"
+                    maxlength="1000"
+                    style="max-height: 250px; min-height: 100px; resize: vertical;"
+                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259] overflow-y-auto"
+                    onkeyup="updateCharCount(this, 'descriptionCount')"></textarea>
+                <div class="text-sm text-gray-500 mt-1">
+                    <span id="descriptionCount">0</span>/1000 caractères
+                </div>
+            </div>            
+
+            <!-- Champ pour le prix -->            
+            <div>
                 <label for="prix" class="block text-lg font-bold text-[#4A3428] mb-2">Prix (CHF)</label>
                 <div class="relative">                    <input type="number" 
                         id="prix" 
                         name="prix" 
                         step="0.01" 
                         min="0" 
-                        max="99999.99"
-                        pattern="^\d{1,5}(\.\d{0,2})?$"
-                        oninput="validateNumber(this, 0, 99999.99)"
-                        onchange="validateNumber(this, 0, 99999.99)"
+                        max="9999.99"
+                        pattern="^\d{1,4}(\.\d{0,2})?$"
+                        oninput="validateNumber(this, 0, 9999.99)"
+                        onchange="validateNumber(this, 0, 9999.99)"
                         class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
-                    <span class="text-sm text-gray-500 mt-1">Maximum: 99'999.99 CHF (2 décimales maximum)</span>
+                    <span class="text-sm text-gray-500 mt-1">Maximum: 9'999.99 CHF (2 décimales maximum)</span>
                 </div>
             </div>
-        </div>
-
-        {{-- Colonne droite : Détails techniques --}}
+        </div>        <!-- Colonne droite : Détails techniques -->
         <div class="space-y-6">
-            {{-- Zone de texte pour les instructions de préparation --}}
+
+            <!-- Zone de texte pour les instructions de préparation -->
             <div>
                 <label for="preparation" class="block text-lg font-bold text-[#4A3428] mb-2">Préparation</label>
                 <textarea id="preparation" name="preparation" rows="4"
-                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]"></textarea>
-            </div>            {{-- Champ pour la quantité --}}            <div>
+                    maxlength="500"
+                    style="max-height: 250px; min-height: 100px; resize: vertical;"
+                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259] overflow-y-auto"
+                    onkeyup="updateCharCount(this, 'preparationCount')"></textarea>
+                <div class="text-sm text-gray-500 mt-1">
+                    <span id="preparationCount">0</span>/500 caractères
+                </div>
+            </div>            
+
+            <!-- Champ pour la quantité -->
+            <div>
                 <label for="quantite" class="block text-lg font-bold text-[#4A3428] mb-2">Quantité (pièces)</label>
                 <div class="relative">                    <input type="number" 
                         id="quantite" 
@@ -70,25 +85,23 @@
                 </div>
             </div>
 
-            {{-- Sélecteur de date avec icône --}}
+            <!-- Sélecteur de date avec icône -->
             <div>
-                <label for="date" class="block text-lg font-bold text-[#4A3428] mb-2">Date</label>
+                <label for="date" class="block text-lg font-bold text-[#4A3428] mb-2">Date de récolte</label>
                 <div class="relative">
                     <input type="date" id="date" name="date"
                         class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
                     <span class="absolute right-2 top-1/2 transform -translate-y-1/2">
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
                     </span>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Section des listes déroulantes pour les catégorisations --}}
+    <!-- Section des listes déroulantes pour les catégorisations -->
     <div class="mt-8 grid grid-cols-3 gap-6">
-        {{-- Sélection de la variété --}}
+
+        <!-- Sélection de la variété -->
         <div class="bg-[#F4E5C3] rounded-lg p-4">
             <button type="button" onclick="toggleList('varieteList')" class="w-full flex justify-between items-center text-lg font-bold text-[#4A3428]">
                 <span>Variété</span>
@@ -104,7 +117,7 @@
                             <span>{{ $variete->nom }}</span>
                         </label>
                         <div class="flex space-x-2">
-                <button type="button" onclick="event.preventDefault(); openEditModal('variete', {{ $variete->id_variete }}, '{{ $variete->nom }}')" 
+                <button type="button" onclick="event.preventDefault(); openEditpopup('variete', {{ $variete->id_variete }}, '{{ $variete->nom }}')" 
                                 class="text-[#967259] hover:text-[#7d6049]">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -119,13 +132,13 @@
                         </div>
                     </div>
                 @endforeach
-            </div>            <button type="button" onclick="event.preventDefault(); openAddModal('variete')" 
+            </div>            <button type="button" onclick="event.preventDefault(); openAddpopup('variete')" 
                 class="mt-4 w-full bg-[#967259] text-white px-4 py-2 rounded hover:bg-[#7d6049]">
                 Ajouter un élément
             </button>
         </div>
 
-        {{-- Sélection de la provenance --}}
+        <!-- Sélection de la provenance -->
         <div class="bg-[#F4E5C3] rounded-lg p-4">
             <button type="button" onclick="toggleList('provenanceList')" class="w-full flex justify-between items-center text-lg font-bold text-[#4A3428]">
                 <span>Provenance</span>
@@ -141,7 +154,7 @@
                             <span>{{ $provenance->nom }}</span>
                         </label>
                         <div class="flex space-x-2">
-                            <button type="button" onclick="openEditModal('provenance', {{ $provenance->id_provenance }}, '{{ $provenance->nom }}')"
+                            <button type="button" onclick="openEditpopup('provenance', {{ $provenance->id_provenance }}, '{{ $provenance->nom }}')"
                                 class="text-[#967259] hover:text-[#7d6049]">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -157,13 +170,13 @@
                     </div>
                 @endforeach
             </div>
-            <button type="button" onclick="openAddModal('provenance')"
+            <button type="button" onclick="openAddpopup('provenance')"
                 class="mt-4 w-full bg-[#967259] text-white px-4 py-2 rounded hover:bg-[#7d6049]">
                 Ajouter un élément
             </button>
         </div>
 
-        {{-- Sélection du type --}}
+        <!-- Sélection du type -->
         <div class="bg-[#F4E5C3] rounded-lg p-4">
             <button type="button" onclick="toggleList('typeList')" class="w-full flex justify-between items-center text-lg font-bold text-[#4A3428]">
                 <span>Type</span>
@@ -179,7 +192,7 @@
                             <span>{{ $type->nom }}</span>
                         </label>
                         <div class="flex space-x-2">
-                            <button type="button" onclick="openEditModal('type', {{ $type->id_type }}, '{{ $type->nom }}')"
+                            <button type="button" onclick="openEditpopup('type', {{ $type->id_type }}, '{{ $type->nom }}')"
                                 class="text-[#967259] hover:text-[#7d6049]">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -195,30 +208,29 @@
                     </div>
                 @endforeach
             </div>
-            <button type="button" onclick="openAddModal('type')"
+            <button type="button" onclick="openAddpopup('type')"
                 class="mt-4 w-full bg-[#967259] text-white px-4 py-2 rounded hover:bg-[#7d6049]">
                 Ajouter un élément
             </button>
         </div>
     </div>
-
-    {{-- Modal pour l'ajout/modification d'éléments --}}    <div id="itemModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onclick="closeModal()">
+        <!-- Pop-up pour l'ajout/modification d'éléments -->
+    <div id="itempopup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onclick="closepopup()">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onclick="event.stopPropagation();">
             <div class="mt-3 text-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Ajouter un élément</h3>
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="popupTitle">Ajouter un élément</h3>
                 <div class="mt-2 px-7 py-3">
-                    <input type="hidden" id="modalAction" value="add">
-                    <input type="hidden" id="modalType" value="">
-                    <input type="hidden" id="modalItemId" value="">
-                    <input type="text" id="modalItemName" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#967259]"
-                        placeholder="Nom de l'élément">
+                    <input type="hidden" id="popupAction" value="add">
+                    <input type="hidden" id="popupType" value="">
+                    <input type="hidden" id="popupItemId" value="">
+                    <input type="text" id="popupItemName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#967259]" placeholder="Nom de l'élément">
                 </div>
-                <div class="items-center px-4 py-3">                    <button type="button" id="modalSaveBtn" 
+                <div class="items-center px-4 py-3">                    
+                    <button type="button" id="popupSaveBtn" 
                         class="px-4 py-2 bg-[#967259] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#7d6049] focus:outline-none focus:ring-2 focus:ring-[#967259]">
                         Enregistrer
                     </button>
-                    <button type="button" id="modalCancelBtn"
+                    <button type="button" id="popupCancelBtn"
                         class="mt-3 px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
                         Annuler
                     </button>
@@ -227,19 +239,46 @@
         </div>
     </div>
 
-    {{-- Boutons d'action en bas du formulaire --}}
+    <!-- Boutons d'action en bas du formulaire -->
     <div class="mt-8 flex justify-between space-x-4">
-        {{-- Bouton pour réinitialiser le formulaire --}}
+        <!-- Bouton pour réinitialiser le formulaire -->
         <button type="reset" class="w-full bg-[#FFEFCD] text-[#4A3428] px-8 py-3 rounded-lg hover:bg-[#F4E5C3] transition duration-200">
             Effacer
         </button>
-        {{-- Bouton pour soumettre le formulaire --}}
-        <button type="submit" class="w-full bg-[#967259] text-white px-8 py-3 rounded-lg hover:bg-[#7d6049] transition duration-200">
+        <!-- Bouton pour soumettre le formulaire -->
+        <button type="submit" name="action" value="submit" class="w-full bg-[#967259] text-white px-8 py-3 rounded-lg hover:bg-[#7d6049] transition duration-200">
             Ajouter
         </button>
-    </div>    {{-- Script pour la gestion des modals et des actions CRUD --}}
+    </div>
+
+    <!-- Scripts pour la gestion des validations et interactions -->
     @push('scripts')
-    <script>        // Fonction de validation des nombres avec 2 décimales pour le prix
+    <script>
+        /**
+         * Met à jour le compteur de caractères pour les champs textarea
+         * @param {HTMLTextAreaElement} textarea - Le champ textarea à surveiller
+         * @param {string} counterId - L'ID de l'élément affichant le nombre de caractères
+         */
+        function updateCharCount(textarea, counterId) {
+            const counter = document.getElementById(counterId);
+            const currentLength = textarea.value.length;
+            const maxLength = textarea.getAttribute('maxlength');
+            counter.textContent = currentLength;
+            
+            // Change la couleur si on approche de la limite
+            if (currentLength >= maxLength * 0.9) {
+                counter.classList.add('text-red-500');
+            } else {
+                counter.classList.remove('text-red-500');
+            }
+        }
+
+        /**
+         * Fonction de validation des nombres pour les champs prix et quantité
+         * @param {HTMLInputElement} input - L'élément input à valider
+         * @param {number} min - Valeur minimum autorisée
+         * @param {number} max - Valeur maximum autorisée
+         */
         function validateNumber(input, min, max) {
             let value = parseFloat(input.value);
             if (isNaN(value)) {
@@ -247,87 +286,160 @@
                 return;
             }
             
-            // Arrondir à 2 décimales pour le prix
+            // Traitement spécifique selon le type de champ
             if (input.id === 'prix') {
+                // Arrondir à 2 décimales pour le prix (format DECIMAL(8,2))
                 value = Math.round(value * 100) / 100;
             } else {
-                value = Math.floor(value); // Nombres entiers pour la quantité
+                // Nombres entiers pour la quantité
+                value = Math.floor(value);
             }
             
-            if (value < min) {
-                value = min;
-            } else if (value > max) {
-                value = max;
-            }
-            
+            // Appliquer les limites min/max
+            value = Math.max(min, Math.min(max, value));
             input.value = value;
         }
 
         // Validation du formulaire avant soumission
         document.querySelector('form').addEventListener('submit', function(e) {
+            // Ne valider que si c'est une soumission du formulaire (pas pour la déconnexion)
+            if (e.submitter && e.submitter.getAttribute('name') !== 'action') {
+                return true;
+            }
+
             const prix = document.getElementById('prix');
             const quantite = document.getElementById('quantite');
             let hasError = false;
-            let errorMessage = '';            // Vérification du prix (DECIMAL(8,2) dans MySQL)
+            let errorMessage = '';
+
+            // Validation du prix (DECIMAL(8,2) dans MySQL)
             if (prix.value === '' || isNaN(prix.value)) {
-                errorMessage += 'Le prix doit être un nombre valide.\n';
                 hasError = true;
-            } else if (parseFloat(prix.value) < 0 || parseFloat(prix.value) > 99999.99) {
-                errorMessage += 'Le prix doit être compris entre 0 et 99\'999.99 CHF.\n';
+                errorMessage = 'Le prix doit être un nombre valide.';
+            } else if (parseFloat(prix.value) < 0 || parseFloat(prix.value) > 9999.99) {
                 hasError = true;
+                errorMessage = 'Le prix doit être entre 0 et 9999.99 CHF.';
             }
 
-            // Vérification de la quantité (INT dans MySQL)
+            // Validation de la quantité (INT dans MySQL)
             if (quantite.value === '' || isNaN(quantite.value)) {
-                errorMessage += 'La quantité doit être un nombre valide.\n';
                 hasError = true;
+                errorMessage += (errorMessage ? '\n' : '') + 'La quantité doit être un nombre valide.';
             } else if (parseInt(quantite.value) < 0 || parseInt(quantite.value) > 999999) {
-                errorMessage += 'La quantité doit être comprise entre 0 et 999\'999 pièces.\n';
                 hasError = true;
+                errorMessage += (errorMessage ? '\n' : '') + 'La quantité doit être entre 0 et 999999.';
             }
 
-            // Si erreur, empêcher la soumission et afficher le message
+            // Arrêter la soumission si des erreurs sont trouvées
             if (hasError) {
                 e.preventDefault();
                 alert(errorMessage);
             }
         });
 
-        // Script existant pour les modals
-        // Modal elements
-        const modal = document.getElementById('itemModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalAction = document.getElementById('modalAction');
-        const modalType = document.getElementById('modalType');
-        const modalItemId = document.getElementById('modalItemId');
-        const modalItemName = document.getElementById('modalItemName');
-        const modalSaveBtn = document.getElementById('modalSaveBtn');
-        const modalCancelBtn = document.getElementById('modalCancelBtn');
+        // Scripts existants pour les Pop-ups
+        // Pop-up elements
+        const popup = document.getElementById('itempopup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupAction = document.getElementById('popupAction');
+        const popupType = document.getElementById('popupType');
+        const popupItemId = document.getElementById('popupItemId');
+        const popupItemName = document.getElementById('popupItemName');
+        const popupSaveBtn = document.getElementById('popupSaveBtn');
+        const popupCancelBtn = document.getElementById('popupCancelBtn');
 
-        // Ouvrir le modal pour ajouter un élément
-        function openAddModal(type) {
-            modalTitle.textContent = `Ajouter un ${type}`;
-            modalAction.value = 'add';
-            modalType.value = type;
-            modalItemId.value = '';
-            modalItemName.value = '';
-            modal.classList.remove('hidden');
+        // Ouvrir le Pop-up pour ajouter un élément
+        function openAddpopup(type) {
+            popupTitle.textContent = `Ajouter un ${type}`;
+            popupAction.value = 'add';
+            popupType.value = type;
+            popupItemId.value = '';
+            popupItemName.value = '';
+            popup.classList.remove('hidden');
         }
 
-        // Ouvrir le modal pour modifier un élément
-        function openEditModal(type, id, name) {
-            modalTitle.textContent = `Modifier le ${type}`;
-            modalAction.value = 'edit';
-            modalType.value = type;
-            modalItemId.value = id;
-            modalItemName.value = name;
-            modal.classList.remove('hidden');
+        // Ouvrir le Pop-up pour modifier un élément
+        function openEditpopup(type, id, name) {
+            popupTitle.textContent = `Modifier le ${type}`;
+            popupAction.value = 'edit';
+            popupType.value = type;
+            popupItemId.value = id;
+            popupItemName.value = name;
+            popup.classList.remove('hidden');
         }
 
-        // Fermer le modal
-        function closeModal() {
-            modal.classList.add('hidden');
-        }        // Supprimer un élément
+        // Fermer le Pop-up
+        function closepopup() {
+            popup.classList.add('hidden');
+        }        /**
+         * Mise à jour asynchrone d'une liste (type, variété ou provenance)
+         * Cette fonction utilise l'API Fetch pour :
+         * 1. Récupérer la liste mise à jour depuis le serveur
+         * 2. Régénérer le HTML de la liste avec les nouvelles données
+         * 3. Conserver la sélection actuelle si elle existe encore
+         * 
+         * @param {string} type - Le type de liste à mettre à jour ('type', 'variete' ou 'provenance')
+         */
+        async function updateList(type) {
+            try {
+                const response = await fetch(`/api/${type}s/list`);
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des données');
+                }
+                
+                const items = await response.json();
+                const listContainer = document.getElementById(`${type}List`);
+                const selectedValue = document.querySelector(`input[name="${type}_id"]:checked`)?.value;
+                
+                let html = '';
+                items.forEach(item => {
+                    const itemId = item[`id_${type}`];
+                    html += `
+                        <div class="flex justify-between items-center bg-[#FFEFCD] rounded p-2">
+                            <label class="flex items-center space-x-2 flex-grow">
+                                <input type="radio" name="${type}_id" value="${itemId}" 
+                                    ${selectedValue == itemId ? 'checked' : ''} 
+                                    class="text-[#967259]">
+                                <span>${item.nom}</span>
+                            </label>
+                            <div class="flex space-x-2">
+                                <button type="button" onclick="openEditpopup('${type}', ${itemId}, '${item.nom}')" 
+                                    class="text-[#967259] hover:text-[#7d6049]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="deleteItem('${type}', ${itemId})"
+                                    class="text-red-500 hover:text-red-700">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                listContainer.innerHTML = html;
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour de la liste:', error);
+                showNotification('Erreur lors de la mise à jour de la liste', 'error');
+            }
+        }
+
+        /**
+         * Gestion de la suppression d'un élément
+         * Cette fonction :
+         * 1. Demande confirmation avant suppression
+         * 2. Envoie une requête DELETE au serveur
+         * 3. Met à jour la liste correspondante si la suppression réussit
+         * 4. Affiche une notification de succès ou d'erreur
+         * 
+         * @param {string} type - Le type d'élément à supprimer
+         * @param {number} id - L'identifiant de l'élément
+         */
         async function deleteItem(type, id) {
             if (!confirm('Voulez-vous vraiment supprimer cet élément ?')) return;
 
@@ -345,11 +457,9 @@
                     }
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
+                const data = await response.json();                if (response.ok) {
+                    await updateList(type);
                     showNotification(data.message || 'Élément supprimé avec succès');
-                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showNotification(data.message || 'Une erreur est survenue lors de la suppression', 'error');
                     deleteBtn.disabled = false;
@@ -376,58 +486,33 @@
             }
         }
 
-        // Configuration des événements
-        modalCancelBtn.onclick = closeModal;                // Fonction pour afficher une notification
-        function showNotification(message, type = 'success') {
-            const notif = document.createElement('div');
-            notif.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white transition-all duration-300 transform translate-y-0 opacity-100 ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            }`;
-            notif.textContent = message;
-            document.body.appendChild(notif);
-
-            // Animation de disparition
-            setTimeout(() => {
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateY(100%)';
-                setTimeout(() => notif.remove(), 300);
-            }, 3000);
-        }
-
-        modalSaveBtn.onclick = async (e) => {
+        /**
+         * Gestionnaire de clic pour le bouton de sauvegarde du Pop-up
+         * Cette fonction gère :
+         * 1. La validation des données entrées
+         * 2. L'envoi des données au serveur (création ou modification)
+         * 3. La mise à jour de la liste concernée
+         * 4. L'affichage des notifications de succès ou d'erreur
+         * 5. La fermeture du Pop-up après succès
+         */
+        popupSaveBtn.onclick = async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const type = modalType.value;
-            const action = modalAction.value;
-            const id = modalItemId.value;
-            const name = modalItemName.value;
+            const type = popupType.value;
+            const action = popupAction.value;
+            const id = popupItemId.value;
+            const name = popupItemName.value;
 
             if (!name.trim()) {
                 showNotification('Veuillez entrer un nom', 'error');
                 return;
             }
 
-            let url;
-            switch(type) {
-                case 'variete':
-                    url = action === 'add' ? '/api/varietes' : `/api/varietes/${id}`;
-                    break;
-                case 'provenance':
-                    url = action === 'add' ? '/api/provenances' : `/api/provenances/${id}`;
-                    break;
-                case 'type':
-                    url = action === 'add' ? '/api/types' : `/api/types/${id}`;
-                    break;
-                default:
-                    showNotification('Type invalide', 'error');
-                    return;
-            }
-            const method = action === 'add' ? 'POST' : 'PUT';
-
             try {
-                modalSaveBtn.disabled = true;
-                modalSaveBtn.textContent = 'Enregistrement...';
-
+                popupSaveBtn.disabled = true;
+                const method = action === 'add' ? 'POST' : 'PUT';
+                const url = action === 'add' ? `/api/${type}s` : `/api/${type}s/${id}`;
+                
                 const response = await fetch(url, {
                     method: method,
                     headers: {
@@ -438,10 +523,10 @@
                 });
 
                 const data = await response.json();
-
                 if (response.ok) {
-                    showNotification(data.message || 'Enregistré avec succès');
-                    setTimeout(() => location.reload(), 1000);
+                    await updateList(type);
+                    showNotification(data.message || `${type} ${action === 'add' ? 'ajouté' : 'modifié'} avec succès`);
+                    closepopup();
                 } else {
                     showNotification(data.message || 'Une erreur est survenue', 'error');
                 }
@@ -449,17 +534,25 @@
                 console.error('Erreur:', error);
                 showNotification('Une erreur est survenue lors de la communication avec le serveur', 'error');
             } finally {
-                modalSaveBtn.disabled = false;
-                modalSaveBtn.textContent = 'Enregistrer';
+                popupSaveBtn.disabled = false;
             }
         };
 
-        // Fermer le modal en cliquant en dehors
+        // Fermer le Pop-up en cliquant en dehors
         window.onclick = (event) => {
-            if (event.target === modal) {
-                closeModal();
+            if (event.target === popup) {
+                closepopup();
             }
         };
+        /**
+         * Affiche une notification à l'utilisateur
+         * @param {string} message - Le message à afficher
+         * @param {string} type - Le type de notification ('success' ou 'error')
+         */
+        function showNotification(message, type = 'success') {
+            // Logique pour afficher la notificatio
+            alert(message);
+        }
     </script>
     @endpush
 

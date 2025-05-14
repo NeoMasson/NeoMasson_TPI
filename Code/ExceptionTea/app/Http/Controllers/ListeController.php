@@ -8,8 +8,16 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 /**
- * Contrôleur gérant les opérations CRUD sur les listes de thés
- * et les interactions entre les listes et les thés
+ * Contrôleur pour la gestion des listes de thés
+ * 
+ * Ce contrôleur gère l'ensemble des opérations CRUD pour les listes de thés,
+ * ainsi que les fonctionnalités avancées comme :
+ * - L'export des listes en PDF
+ * - La gestion des relations many-to-many avec les thés
+ * - Le tri et l'organisation des listes
+ * 
+ * Les listes permettent aux utilisateurs de créer des collections personnalisées
+ * de thés pour différents usages (favoris, à acheter, etc.).
  */
 class ListeController extends Controller
 {
@@ -95,11 +103,17 @@ class ListeController extends Controller
 
     /**
      * Met à jour les informations d'une liste existante
-     * Gère également la mise à jour des thés associés
-     *
-     * @param Request $request Les données du formulaire
+     * 
+     * Cette méthode gère :
+     * - La mise à jour du nom de la liste
+     * - La synchronisation des thés associés (ajout/suppression)
+     * - La validation des données entrées
+     * 
+     * @param Request $request Les données du formulaire de mise à jour
      * @param Liste $liste La liste à mettre à jour
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException Si les données sont invalides
      */
     public function update(Request $request, Liste $liste)
     {
@@ -121,8 +135,13 @@ class ListeController extends Controller
     }
 
     /**
-     * Supprime une liste et détache tous les thés associés
-     *
+     * Supprime une liste et ses associations
+     * 
+     * Cette méthode :
+     * - Détache tous les thés associés (relation many-to-many)
+     * - Supprime l'enregistrement de la liste
+     * - Redirige avec un message de succès
+     * 
      * @param Liste $liste La liste à supprimer
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -136,13 +155,17 @@ class ListeController extends Controller
     }
 
     /**
-     * Génère et télécharge un PDF contenant les détails de la liste
-     * Utilise le package barryvdh/laravel-dompdf pour la génération
-     *
-     * @param Liste $liste La liste à exporter
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * Génère un PDF de la liste de thés
+     * 
+     * Cette méthode crée un document PDF contenant :
+     * - Les informations de base de la liste (nom, date)
+     * - La liste détaillée des thés avec leurs caractéristiques
+     * - Un en-tête et pied de page personnalisés
+     * 
+     * @param Liste $liste La liste à exporter en PDF
+     * @return \Illuminate\Http\Response Le fichier PDF à télécharger
      */
-    public function export(Liste $liste)
+    public function generatePDF(Liste $liste)
     {
         $liste->load('thes.type', 'thes.provenance', 'thes.variete');
         
@@ -152,33 +175,35 @@ class ListeController extends Controller
     }
 
     /**
-     * Ajoute un thé à une liste existante via une requête AJAX
-     * Vérifie si le thé n'est pas déjà dans la liste avant l'ajout
-     *
-     * @param Liste $liste La liste à laquelle ajouter le thé
-     * @param The $the Le thé à ajouter
+     * Ajoute ou retire un thé d'une liste
+     * 
+     * Cette méthode gère de manière asynchrone :
+     * - L'ajout d'un thé à la liste si non présent
+     * - Le retrait d'un thé de la liste si déjà présent
+     * - La validation des données et des permissions
+     * 
+     * @param Request $request Contient l'ID du thé à ajouter/retirer
+     * @param Liste $liste La liste à modifier
      * @return \Illuminate\Http\JsonResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException Si l'ID du thé est invalide
      */
-    public function addThe(Liste $liste, The $the)
+    public function toggleThe(Request $request, Liste $liste)
     {
-        if (!$liste->thes()->where('id_the', $the->id_the)->exists()) {
-            $liste->thes()->attach($the->id_the);
-            return response()->json(['message' => 'Thé ajouté à la liste avec succès']);
-        }
-        
-        return response()->json(['message' => 'Ce thé est déjà dans la liste'], 400);
-    }
+        $validated = $request->validate([
+            'the_id' => 'required|exists:t_the,id_the',
+        ]);
 
-    /**
-     * Retire un thé d'une liste via une requête AJAX
-     *
-     * @param Liste $liste La liste de laquelle retirer le thé
-     * @param The $the Le thé à retirer
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function removeThe(Liste $liste, The $the)
-    {
-        $liste->thes()->detach($the->id_the);
-        return response()->json(['message' => 'Thé retiré de la liste avec succès']);
+        $theId = $validated['the_id'];
+
+        if ($liste->thes()->where('id_the', $theId)->exists()) {
+            $liste->thes()->detach($theId);
+            $message = 'Thé retiré de la liste avec succès';
+        } else {
+            $liste->thes()->attach($theId);
+            $message = 'Thé ajouté à la liste avec succès';
+        }
+
+        return response()->json(['message' => $message]);
     }
 }
