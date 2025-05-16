@@ -14,6 +14,52 @@
 @endsection
 
 @section('content')
+<!-- Affichage des erreurs de validation en français avec style amélioré -->
+@if ($errors->any())
+    <div class="max-w-4xl mx-auto mt-4 mb-6 bg-[#F4E5C3] border-l-4 border-[#967259] p-4 rounded-md shadow-md">
+        <div class="flex items-center mb-2">
+            <svg class="w-6 h-6 text-[#967259] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-[#4A3428]">Attention ! Veuillez corriger les erreurs suivantes :</h3>
+        </div>
+        <ul class="list-disc list-inside text-[#4A3428] pl-2">
+            @foreach ($errors->all() as $error)
+                <li class="py-1">
+                    @switch(true)
+                        @case(strpos($error, 'The description field is required') !== false)
+                            Une description est requise
+                            @break
+                        @case(strpos($error, 'The preparation field is required') !== false)
+                            Les instructions de préparation sont nécessaires
+                            @break
+                        @case(strpos($error, 'The quantite field is required') !== false)
+                            La quantité est obligatoire
+                            @break
+                        @case(strpos($error, 'The type id field is required') !== false)
+                            Veuillez sélectionner un type de thé
+                            @break
+                        @case(strpos($error, 'The variete id field is required') !== false)
+                            Veuillez sélectionner une variété de thé
+                            @break
+                        @case(strpos($error, 'The provenance id field is required') !== false)
+                            Veuillez sélectionner une provenance
+                            @break
+                        @case(strpos($error, 'must be a number') !== false)
+                            La valeur doit être un nombre
+                            @break
+                        @case(strpos($error, 'must be at least') !== false)
+                            La valeur doit être un nombre positif
+                            @break
+                        @default
+                            {{ $error }}
+                    @endswitch
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 {{-- Formulaire d'édition avec mise en page en grille --}}
 <form action="{{ route('thes.update', $the) }}" method="POST" class="grid grid-cols-2 gap-6">
     {{-- Protection CSRF et méthode PUT pour l'édition --}}

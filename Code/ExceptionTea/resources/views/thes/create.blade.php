@@ -6,12 +6,66 @@
 @endsection
 
 @section('content')
+<!-- Affichage des erreurs de validation en français avec style amélioré -->
+@if ($errors->any())
+    <div class="max-w-4xl mx-auto mt-4 mb-6 bg-[#F4E5C3] border-l-4 border-[#967259] p-4 rounded-md shadow-md">
+        <div class="flex items-center mb-2">
+            <svg class="w-6 h-6 text-[#967259] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-[#4A3428]">Attention ! Veuillez corriger les erreurs suivantes :</h3>
+        </div>
+        <ul class="list-disc list-inside text-[#4A3428] pl-2">
+            @foreach ($errors->all() as $error)
+                <li class="py-1">
+                    @switch(true)
+                        @case(strpos($error, 'The nom field is required') !== false)
+                            Le nom du thé est obligatoire
+                            @break
+                        @case(strpos($error, 'The description field is required') !== false)
+                            Une description est requise
+                            @break
+                        @case(strpos($error, 'The preparation field is required') !== false)
+                            Les instructions de préparation sont nécessaires
+                            @break
+                        @case(strpos($error, 'The quantite field is required') !== false)
+                            La quantité est obligatoire
+                            @break
+                        @case(strpos($error, 'The prix field is required') !== false)
+                            Le prix doit être indiqué
+                            @break
+                        @case(strpos($error, 'The date field is required') !== false)
+                            La date de récolte est obligatoire
+                            @break
+                        @case(strpos($error, 'The type_id field is required') !== false)
+                            Veuillez sélectionner un type de thé
+                            @break
+                        @case(strpos($error, 'The variete_id field is required') !== false)
+                            Veuillez sélectionner une variété de thé
+                            @break
+                        @case(strpos($error, 'The provenance_id field is required') !== false)
+                            Veuillez sélectionner une provenance
+                            @break
+                        @case(strpos($error, 'must be a number') !== false)
+                            La valeur doit être un nombre
+                            @break
+                        @case(strpos($error, 'must be at least') !== false)
+                            La valeur doit être un nombre positif
+                            @break
+                        @default
+                            {{ $error }}
+                    @endswitch
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <!-- Formulaire principal avec mise en page responsive -->
 <form action="{{ route('thes.store') }}" method="POST" class="max-w-4xl mx-auto p-6">
     <!-- Token CSRF pour la sécurité -->
     @csrf
-      <!-- Grille principale divisée en deux colonnes -->
-    <div class="grid grid-cols-2 gap-6">
+    <!-- Grille principale - une colonne sur mobile, deux sur tablette/desktop -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Colonne gauche : Informations générales -->
         <div class="space-y-6">
             <!-- Champ pour le nom du thé -->
@@ -19,7 +73,7 @@
                 <label for="nom" class="block text-lg font-bold text-[#4A3428] mb-2">Nom</label>
                 <div class="relative">
                     <input type="text" id="nom" name="nom" 
-                        placeholder="e.g. Matcha, Earl grey, etc."
+                        placeholder="ex. Matcha, Earl grey, etc..."
                         class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
                 </div>
             </div>
@@ -39,10 +93,11 @@
             <!-- Champ pour le prix -->            
             <div>
                 <label for="prix" class="block text-lg font-bold text-[#4A3428] mb-2">Prix (CHF)</label>
-                <div class="relative">                    <input type="number" 
+                <div class="relative">                    
+                    <input type="number" 
                         id="prix" 
                         name="prix" 
-                        step="0.01" 
+                        step="1" 
                         min="0" 
                         max="9999.99"
                         pattern="^\d{1,4}(\.\d{0,2})?$"
@@ -52,7 +107,7 @@
                     <span class="text-sm text-gray-500 mt-1">Maximum: 9'999.99 CHF (2 décimales maximum)</span>
                 </div>
             </div>
-        </div>        <!-- Colonne droite : Détails techniques -->
+        </div>        <!-- Colonne de droite -->
         <div class="space-y-6">
 
             <!-- Zone de texte pour les instructions de préparation -->
@@ -71,7 +126,8 @@
             <!-- Champ pour la quantité -->
             <div>
                 <label for="quantite" class="block text-lg font-bold text-[#4A3428] mb-2">Quantité (pièces)</label>
-                <div class="relative">                    <input type="number" 
+                <div class="relative">                    
+                    <input type="number" 
                         id="quantite" 
                         name="quantite" 
                         min="0" 
@@ -99,7 +155,7 @@
     </div>
 
     <!-- Section des listes déroulantes pour les catégorisations -->
-    <div class="mt-8 grid grid-cols-3 gap-6">
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
         <!-- Sélection de la variété -->
         <div class="bg-[#F4E5C3] rounded-lg p-4">
@@ -109,7 +165,19 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div id="varieteList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto">
+            <!--faire en sorte que la scrollbar de la liste ai une couleur qui va avec le thème (optionel si tout doit absolument être en Tailwind)-->
+            <style>
+                .scrollbar-thin::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .scrollbar-thin::-webkit-scrollbar-thumb {
+                    background-color: #967259;
+                    border-radius: 4px;
+                }
+            </style>
+
+            <!-- Liste des variétés -->
+            <div id="varieteList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto scrollbar-thin">
                 @foreach($varietes as $variete)
                     <div class="flex justify-between items-center bg-[#FFEFCD] rounded p-2">
                         <label class="flex items-center space-x-2 flex-grow">
@@ -146,7 +214,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div id="provenanceList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto">
+            <div id="provenanceList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto scrollbar-thin">
                 @foreach($provenances as $provenance)
                     <div class="flex justify-between items-center bg-[#FFEFCD] rounded p-2">
                         <label class="flex items-center space-x-2 flex-grow">
@@ -184,7 +252,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div id="typeList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto">
+            <div id="typeList" class="hidden space-y-2 mt-4 max-h-48 overflow-y-auto scrollbar-thin">
                 @foreach($types as $type)
                     <div class="flex justify-between items-center bg-[#FFEFCD] rounded p-2">
                         <label class="flex items-center space-x-2 flex-grow">
@@ -230,7 +298,7 @@
                         class="px-4 py-2 bg-[#967259] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#7d6049] focus:outline-none focus:ring-2 focus:ring-[#967259]">
                         Enregistrer
                     </button>
-                    <button type="button" id="popupCancelBtn"
+                    <button type="button" id="popupCancelBtn" onclick="closepopup()"
                         class="mt-3 px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
                         Annuler
                     </button>
@@ -240,9 +308,9 @@
     </div>
 
     <!-- Boutons d'action en bas du formulaire -->
-    <div class="mt-8 flex justify-between space-x-4">
+    <div class="mt-8 flex flex-col sm:flex-row justify-between sm:space-x-4 space-y-4 sm:space-y-0">
         <!-- Bouton pour réinitialiser le formulaire -->
-        <button type="reset" class="w-full bg-[#FFEFCD] text-[#4A3428] px-8 py-3 rounded-lg hover:bg-[#F4E5C3] transition duration-200">
+        <button type="reset" class="w-full bg-[#FFEFCD] text-[#4A3428] px-8 py-3 rounded-lg hover:bg-[#F4E5C3] transition duration-200" onclick="document.getElementById('descriptionCount').textContent = '0'; document.getElementById('preparationCount').textContent = '0';">
             Effacer
         </button>
         <!-- Bouton pour soumettre le formulaire -->
@@ -250,6 +318,7 @@
             Ajouter
         </button>
     </div>
+</form>
 
     <!-- Scripts pour la gestion des validations et interactions -->
     @push('scripts')
@@ -306,7 +375,7 @@
             if (e.submitter && e.submitter.getAttribute('name') !== 'action') {
                 return true;
             }
-
+            // Récupérer les éléments du formulaire
             const prix = document.getElementById('prix');
             const quantite = document.getElementById('quantite');
             let hasError = false;
@@ -550,21 +619,9 @@
          * @param {string} type - Le type de notification ('success' ou 'error')
          */
         function showNotification(message, type = 'success') {
-            // Logique pour afficher la notificatio
+            // Logique pour afficher la notification
             alert(message);
         }
     </script>
     @endpush
-
-    {{-- Affichage des erreurs de validation --}}
-    @if ($errors->any())
-        <div class="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-</form>
 @endsection

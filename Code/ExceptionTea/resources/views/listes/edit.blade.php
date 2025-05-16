@@ -49,10 +49,10 @@ Modifier la liste "{{ $liste->nom }}"
             @enderror
         </div>
 
-        <!-- Boutons d'action -->
-        <div class="flex justify-end space-x-3">
+        <!-- Boutons d'action - responsive pour mobile -->
+        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
             <a href="{{ route('listes.index') }}" 
-                class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                class="text-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
                 Annuler
             </a>
             <button type="submit" 

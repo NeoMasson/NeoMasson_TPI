@@ -6,7 +6,12 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
+    <button onclick="window.history.back()" class="mb-4 flex items-center text-[#4A3428] hover:text-[#967259] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+    </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <h1 class="text-3xl font-bold text-[#4A3428]">{{ $liste->nom }}</h1>
         <div class="flex space-x-4">
             <form action="{{ route('listes.export', $liste) }}" method="POST" class="inline">

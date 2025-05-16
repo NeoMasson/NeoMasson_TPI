@@ -155,6 +155,20 @@ class ListeController extends Controller
     }
 
     /**
+     * Point d'entrée pour l'export de liste en PDF
+     * 
+     * Cette méthode est appelée depuis la route listes.export
+     * et redirige vers la méthode generatePDF pour le traitement
+     * 
+     * @param Liste $liste La liste à exporter en PDF
+     * @return \Illuminate\Http\Response Le fichier PDF à télécharger
+     */
+    public function export(Liste $liste)
+    {
+        return $this->generatePDF($liste);
+    }
+
+    /**
      * Génère un PDF de la liste de thés
      * 
      * Cette méthode crée un document PDF contenant :

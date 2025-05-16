@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,9 +10,24 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-[#FFEFCD] flex h-screen">
-        <!-- Menu latéral - Navigation principale -->
-        <aside class="w-64 bg-[#967259] h-full p-6 flex flex-col">
+    <body class="bg-[#FFEFCD] min-h-screen" x-data="{ sidebarOpen: false }">
+        <!-- Bouton d'ouverture du menu mobile -->
+        <div class="lg:hidden fixed top-4 left-4 z-20">
+            <button @click="sidebarOpen = !sidebarOpen" class="bg-[#967259] text-white p-2 rounded-md">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path x-show="!sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <path x-show="sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Conteneur principal avec flex layout pour desktop -->
+        <div class="flex flex-col lg:flex-row min-h-screen">
+            <!-- Menu latéral - Navigation principale -->
+            <aside 
+                class="fixed inset-y-0 left-0 z-10 w-64 bg-[#967259] p-6 flex flex-col transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0"
+                :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
+            >
             <div class="mb-10">
                 <div class="w-40 h-16 mx-auto mb-6"> <img src="{{ asset('images/logo_ExceptionTea.webp') }}" alt="Logo du site"></div>
             </div>
@@ -21,6 +36,7 @@
                     @auth
                         <!-- Lien vers la page d'accueil -->
                         <li class="flex items-center space-x-2">
+                        
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                             </svg>
@@ -61,7 +77,15 @@
         </aside>
 
         <!-- Contenu principal -->
-        <main class="flex-1 p-8">
+            <!-- Overlay pour fermer le menu sur mobile -->
+            <div 
+                x-show="sidebarOpen" 
+                @click="sidebarOpen = false" 
+                class="fixed inset-0 bg-black bg-opacity-50 z-0 lg:hidden">
+            </div>
+
+            <!-- Contenu principal -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full lg:ml-0">
             @auth
                 <!-- En-tête de la page -->
                 <div class="mb-6">
@@ -89,7 +113,8 @@
                     </div>
                 </div>
             @endif
-        </main>
+            </main>
+        </div>
 
         <!-- Scripts supplémentaires -->
         @stack('scripts')
