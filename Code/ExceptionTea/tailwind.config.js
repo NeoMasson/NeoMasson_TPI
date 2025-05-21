@@ -12,7 +12,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Cambria', ...defaultTheme.fontFamily.sans],
             },
             backgroundColor: {
                 'input': '#F0E3C4',
