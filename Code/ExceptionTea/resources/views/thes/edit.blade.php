@@ -139,10 +139,21 @@
                 </select>
             </div>
             <!--champs pour le Prix-->
-            <div class="mb-6">
-                <label class="block text-lg font-bold text-[#4A3428] mb-2">Prix (CHF)</label>
-                <input type="number" name="prix" value="{{ $the->prix }}"
-                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
+            <div>
+                <label for="prix" class="block text-lg font-bold text-[#4A3428] mb-2">Prix (CHF)</label>
+                <div class="relative">                    
+                    <input type="number" value="{{ $the->prix }}"
+                        id="prix" 
+                        name="prix" 
+                        step="1" 
+                        min="0" 
+                        max="9999.99"
+                        pattern="^\d{1,4}(\.\d{0,2})?$"
+                        oninput="validateNumber(this, 0, 9999.99)"
+                        onchange="validateNumber(this, 0, 9999.99)"
+                        class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
+                    <span class="text-sm text-gray-500 mt-1">Maximum: 9'999 CHF (pas de décimales)</span>
+                </div>
             </div>
             <!-- champ pour la date-->
             <div class="mb-6">

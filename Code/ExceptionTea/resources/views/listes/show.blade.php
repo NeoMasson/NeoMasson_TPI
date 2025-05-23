@@ -30,12 +30,6 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($liste->thes as $the)
         <div class="bg-[#FFEFCD] rounded-lg shadow-lg p-6 relative" id="the-card-{{ $the->id_the }}">
-            <button onclick="removeFromList({{ $liste->id_liste }}, {{ $the->id_the }})" 
-                    class="absolute top-2 right-2 text-red-500 hover:text-red-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
             <h3 class="text-xl font-semibold text-[#4A3428] mb-2">{{ $the->nom }}</h3>
             <p class="text-gray-600"><span class="font-medium">Type:</span> {{ $the->type->nom }}</p>
             <p class="text-gray-600"><span class="font-medium">Provenance:</span> {{ $the->provenance->nom }}</p>
