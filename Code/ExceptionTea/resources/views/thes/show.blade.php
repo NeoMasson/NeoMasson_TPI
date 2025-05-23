@@ -20,6 +20,9 @@
                 <!-- Section préparation -->
                 <h2 class="text-2xl font-bold mb-4">Préparation</h2>
                 <p>{{ $the->preparation }}</p>
+                <!-- section prix -->
+                <h2 class="text-2xl font-bold mb-4"><BR>Prix</h2>
+                <p>{{ $the->prix }} CHF</p>
             </div>
         </div>
 
@@ -45,6 +48,13 @@
                 <div>
                     <h3 class="text-xl mb-2">Provenance : {{ $the->provenance->nom }}</h3>
                 </div>
+
+                <!-- date de récolte-->
+                 <div>
+                 <h3 class="text-xl mb-2">
+                    Date de récolte : {{ \Carbon\Carbon::parse($the->date_recolte)->format('d/m/Y') }}
+                </h3>
+                </div> 
             </div>
         </div>
     </div>

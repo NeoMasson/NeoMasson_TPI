@@ -92,7 +92,7 @@
         <div class="space-y-6">
             {{-- Champ Quantité --}}
             <div class="mb-6">
-                <label class="block text-lg font-bold text-[#4A3428] mb-2">Quantité (g)</label>
+                <label class="block text-lg font-bold text-[#4A3428] mb-2">Quantité</label>
                 <input type="number" name="quantite" value="{{ $the->quantite }}"
                     class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
             </div>
@@ -137,6 +137,19 @@
                         </option>
                     @endforeach
                 </select>
+            </div>
+            <!--champs pour le Prix-->
+            <div class="mb-6">
+                <label class="block text-lg font-bold text-[#4A3428] mb-2">Prix (CHF)</label>
+                <input type="number" name="prix" value="{{ $the->prix }}"
+                    class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259]">
+            </div>
+            <!-- champ pour la date-->
+            <div class="mb-6">
+                <label class="block text-lg font-bold text-[#4A3428] mb-2">Date de récolte</label>
+                <input 
+                type="date" name="date_recolte" value="{{ \Carbon\Carbon::parse($the->date_recolte)->toDateString() }}"
+                class="w-full bg-input rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#967259']">
             </div>
         </div>
     </div>

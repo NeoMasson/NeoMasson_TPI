@@ -71,6 +71,8 @@ class TheController extends Controller
             'description' => 'required|string',
             'preparation' => 'required|string',
             'quantite' => 'required|numeric|min:0',
+            'prix' => 'required|numeric|min:0',
+            'date_recolte' => 'nullable|date',
             'type_id' => 'required|exists:t_type,id_type',
             'variete_id' => 'required|exists:t_variete,id_variete',
             'provenance_id' => 'required|exists:t_provenance,id_provenance',
@@ -80,6 +82,8 @@ class TheController extends Controller
             'description' => $validated['description'],
             'preparation' => $validated['preparation'],
             'quantite' => $validated['quantite'],
+            'prix' => $validated['prix'],
+            'date_recolte' => $validated['date_recolte'] ?? $the->date_recolte, // Conserve la date existante si non fournie
             'fk_id_type' => $validated['type_id'],
             'fk_id_variete' => $validated['variete_id'],
             'fk_id_provenance' => $validated['provenance_id'],
